@@ -1,20 +1,69 @@
 # web3-wallet
 
-1. Bitcoin (BTC) 地址格式
-  格式：以 1 或 3 开头（旧版和新版P2PKH与P2SH地址），或者以 bc1 开头（Bech32格式）。
-  长度：通常是26至35个字符。
-2. Ethereum (ETH) 地址格式
-  格式：以 0x 开头，后跟40个十六进制字符（0-9, a-f）。
-  长度：42个字符。
-3. Binance Smart Chain (BSC) 地址格式
-  格式：与ETH地址相同，以 0x 开头，后跟40个十六进制字符。
-  长度：42个字符。
-4. Solana (SOL) 地址格式
-  格式：Solana的地址是一个32字节的base58编码字符串。
-  长度：通常是44个字符（base58编码后的结果）。
-5. Tron (TRX) 地址格式
-  格式：以 T 开头，后面跟着33个字符（Base58格式）。
-  长度：34个字符。
-6. Filecoin (FIL) 地址格式
-  格式：Filecoin地址常见格式：
-  账号地址：以 f1, f3, f5 等前缀开头，后跟字母和数字。
+wallet-system/
+├── api-gateway/                  # 网关服务
+│   ├── main.go
+│   ├── router/
+│   ├── middleware/
+│   └── config/
+│
+├── services/
+│   ├── wallet-service/           # 钱包服务
+│   │   ├── main.go
+│   │   ├── proto/                # gRPC proto 定义
+│   │   ├── handler/              # gRPC / HTTP handler
+│   │   ├── service/              # 业务逻辑 (地址、余额、签名)
+│   │   ├── model/                # 数据库实体
+│   │   ├── repository/           # DB 操作
+│   │   └── config/
+│   │
+│   ├── chain-service/            # 链交互服务
+│   │   ├── main.go
+│   │   ├── proto/
+│   │   ├── client/               # RPC 调用节点
+│   │   ├── listener/             # 区块监听
+│   │   └── config/
+│   │
+│   ├── transaction-service/      # 交易服务
+│   │   ├── main.go
+│   │   ├── proto/
+│   │   ├── service/              # 交易逻辑 (充值/提现/归集)
+│   │   ├── model/
+│   │   └── repository/
+│   │
+│   ├── admin-service/            # 后台管理
+│   │   ├── main.go
+│   │   ├── router/               # gin 路由
+│   │   ├── handler/              # HTTP handler
+│   │   ├── service/              # 管理逻辑 (风控、审核)
+│   │   ├── model/
+│   │   ├── repository/
+│   │   └── config/
+│   │
+│   └── notify-service/           # 异步通知
+│       ├── main.go
+│       ├── consumer/             # Kafka/NATS 消费
+│       ├── service/
+│       └── config/
+│
+├── pkg/                          # 公共包（所有服务复用）
+│   ├── logger/                   # 日志
+│   ├── middleware/               # 中间件
+│   ├── utils/                    # 工具类 (签名、加密)
+│   ├── mq/                       # Kafka/NATS 封装
+│   ├── db/                       # 数据库封装
+│   ├── config/                   # 配置中心
+│   └── auth/                     # JWT / API Key
+│
+├── proto/                        # 全局 gRPC proto 定义
+│   ├── wallet.proto
+│   ├── chain.proto
+│   ├── transaction.proto
+│   └── admin.proto
+│
+├── deployments/                  # 部署相关
+│   ├── docker/                   # Dockerfile
+│   ├── k8s/                      # K8s yaml
+│   └── helm/                     # Helm charts
+│
+└── docs/                         # 架构文档、API 文档
